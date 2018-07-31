@@ -15,21 +15,25 @@ export default class MapContainer extends Component {
 	
 	state={
 		locations: [
-          {title: 'Riso Restaurant', icon: Pizza, info: 'My favourite italian restaurant in Budapest', location: {lat: 47.5059025, lng: 19.0290468}},
-          {title: 'Budapest Zoo', icon: Zoo, info: 'Great Place for the whole Family', location: {lat: 47.5189977, lng: 19.0754546}},
-          {title: 'Podoben Hair Salon', icon: Woman, info: 'Kriszta is a great Hairdresser', location: {lat: 47.4756723, lng: 19.0459695}},
-          {title: 'Vuk Playground', icon: PlayingGround, info: 'Great Place for Kids', location: {lat: 47.4864953, lng: 19.0401898}},
-	      {title: 'Children Railway', icon: Train, info: 'Great place for the whole Family', location: {lat: 47.4978666, lng: 18.964126}}
+          {title: 'Riso Restaurant', icon: Pizza, info: 'My favourite italian restaurant in Budapest', type: 'us', location: {lat: 47.5059025, lng: 19.0290468}},
+          {title: 'Budapest Zoo', icon: Zoo, info: 'Great Place for the whole Family', type: 'Family', location: {lat: 47.5189977, lng: 19.0754546}},
+          {title: 'Podoben Hair Salon', icon: Woman, info: 'Kriszta is a great Hairdresser', type: 'Me', location: {lat: 47.4756723, lng: 19.0459695}},
+          {title: 'Vuk Playground', icon: PlayingGround, info: 'Great Place for Kids', type: 'Family', location: {lat: 47.4864953, lng: 19.0401898}},
+	      {title: 'Children Railway', icon: Train, info: 'Great place for the whole Family', type: 'Family', location: {lat: 47.4978666, lng: 18.964126}}
         ],
 		
 		query: '',
 		markers: [],
-		infowindow: new this.props.google.maps.InfoWindow()
+		filteredMarker: [],
+		infowindow: new this.props.google.maps.InfoWindow()		
 	}
 
   componentDidMount() {
     this.loadMap()
+	this.onClickLocation()
+	
   }
+  
 
   loadMap() {
     if (this.props && this.props.google) {
@@ -48,14 +52,34 @@ export default class MapContainer extends Component {
       this.map = new maps.Map(node, mapConfig)
 	  this.addMarkers()
     }
+	
   } 
+  
+  //function for clicking on the sidebar in order to show the selected location on the map
+  onClickLocation = () => {
+	 const that = this
+	 const {infowindow} = this.state
+	 const {markers} = this.state
+	 
+	 const displayInfowindow = (e) => {
+		 const {markers} = this.state
+		 const markerInd = markers.findIndex(m => m.title.toLowerCase() === e.target.innerText.toLowerCase())
+		 that.populateInfoWindow(markers[markerInd], infowindow)
+		 
+	 }
+	 document.querySelector('.location-list').addEventListener('click', function (e) {
+		 if(e.target && e.target.nodeName === "LI") {
+			 displayInfowindow(e);
+		 }		 
+	 })
+    
+  }
    
   addMarkers = () => {
-	var markerType = this.state.locations.icon;
 	const {google} = this.props
     let {infowindow} = this.state
     const bounds = new google.maps.LatLngBounds()
-
+	
     this.state.locations.forEach((location, ind) => {	  
       const marker = new google.maps.Marker({
         position: {lat: location.location.lat, lng: location.location.lng},
@@ -65,10 +89,18 @@ export default class MapContainer extends Component {
 		icon: location.icon,
 		animation: google.maps.Animation.DROP
       })
+	 
 	  
-
       marker.addListener('click', () => {
         this.populateInfoWindow(marker, infowindow)
+		 if (marker.getAnimation() !== null) {
+          marker.setAnimation(null);
+        } else {
+			marker.setAnimation(google.maps.Animation.BOUNCE);
+			setTimeout(function() {
+			marker.setAnimation(null);
+			}, 1500);
+		}	
       })
       this.setState((state) => ({
         markers: [...state.markers, marker]
@@ -77,32 +109,38 @@ export default class MapContainer extends Component {
     })
     this.map.fitBounds(bounds)
   }
-  
+
    populateInfoWindow = (marker, infowindow) => {
-    const defaultIcon = this.state.locations.icon;
+    //const defaultIcon = this.state.locations.icon;
     if (infowindow.marker !== marker) {
-      infowindow.marker = marker
-      infowindow.setContent('<div>' + marker.title + '</div>' + '<div>' + marker.info + '</div>')
-      infowindow.open(this.map, marker)
+    infowindow.marker = marker;
+	infowindow.setContent('<h3>' + marker.title + '</h3>' + '<h4>' + marker.info + '</h4>')
+      infowindow.open(this.map, marker);
+	  
       // Make sure the marker property is cleared if the infowindow is closed.
       infowindow.addListener('closeclick', function () {
-      infowindow.marker = null
-      })
+      infowindow.marker = null;
+      });
     }
   }
-
   
   render() {
-   
+    const {markers} = this.state
+	
     return (
-      
-        <div className="container"> 
+        <div className="container">	  
           <div className="search-bar">
-		    <li><img src={allLocations} title="all places"/></li>
-			<li><img src={Family} title="Places for Family"/></li>
-			<li><img src={Us} title="Places for Dates"/></li>
-			<li><img src={Me} title="Places for Me"/></li>
-		  </div>		
+		    <li className="all"><img src={allLocations} title="all places"/></li>
+			<li className="Family"><img src={Family} title="Places for Family"/></li>
+			<li className="Us"><img src={Us} title="Places for Dates"/></li>
+			<li className="Me"><img src={Me} title="Places for Me"/></li>
+		  </div>            
+          <div className="list-bar">
+		   <ul className="location-list">{
+			  markers.map( (marker, index) =>
+		     (<li key={index}>{marker.title}</li>))
+		   }</ul>
+          </div>			  
           <div role="application" className="map" ref="map">
             loading map...
           </div>		

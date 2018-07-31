@@ -33,7 +33,7 @@ hr {
 
 .map {
   margin: 0;
-  width: 100%;
+  width: 80%;
   height: 80vh;
 }
 
@@ -47,6 +47,7 @@ hr {
 	width: 100%;
 	height: 40px;
 	background-color: #fdefe1;
+	border-bottom: 1px solid #334d5c;
 }
 
 .search-bar li {
@@ -55,6 +56,32 @@ hr {
 	list-style-type: none;
 	text-align: center;
 	margin: 0 auto;
+	cursor: pointer;
+}
+
+.list-bar {
+  display: flex;
+  width: 20%;
+  float: left;
+  color: #334d5c;
+  line-height: 5rem;
+  background-color: #fdefe1;
+  display: block;
+}
+
+.location-list ul {
+  line-height: 4rem;
+}
+
+.location-list li {
+  list-style-type: none;
+  text-decoration: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.show {
+  display: block;
 }
 
 .error {
