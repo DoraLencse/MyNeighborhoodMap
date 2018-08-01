@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
-import { GoogleApiWrapper } from 'google-maps-react';
 import allLocations from './Icons/icons8-paste-special-40.png';
 import Family from './Icons/icons8-family-40.png';
 import Us from './Icons/icons8-romance-40.png';
@@ -22,16 +21,17 @@ export default class MapContainer extends Component {
 	      {title: 'Children Railway', icon: Train, info: 'Great place for the whole Family', type: 'Family', location: {lat: 47.4978666, lng: 18.964126}}
         ],
 		
-		query: '',
 		markers: [],
 		filteredMarker: [],
 		infowindow: new this.props.google.maps.InfoWindow()		
+
 	}
 
   componentDidMount() {
     this.loadMap()
 	this.onClickLocation()
-	
+	this.clickOnSearchBarFunction()
+	this.filterMarkers()
   }
   
 
@@ -56,11 +56,11 @@ export default class MapContainer extends Component {
   } 
   
   //function for clicking on the sidebar in order to show the selected location on the map
+  //Based on the Udacity webinarP8 : https://www.youtube.com/watch?v=9t1xxypdkrE
   onClickLocation = () => {
 	 const that = this
 	 const {infowindow} = this.state
-	 const {markers} = this.state
-	 
+	 	 
 	 const displayInfowindow = (e) => {
 		 const {markers} = this.state
 		 const markerInd = markers.findIndex(m => m.title.toLowerCase() === e.target.innerText.toLowerCase())
@@ -70,15 +70,15 @@ export default class MapContainer extends Component {
 	 document.querySelector('.location-list').addEventListener('click', function (e) {
 		 if(e.target && e.target.nodeName === "LI") {
 			 displayInfowindow(e);
-		 }		 
-	 })
-    
+		 }	   
+	 })   
   }
    
   addMarkers = () => {
 	const {google} = this.props
     let {infowindow} = this.state
     const bounds = new google.maps.LatLngBounds()
+	const {locations} = this.state
 	
     this.state.locations.forEach((location, ind) => {	  
       const marker = new google.maps.Marker({
@@ -87,9 +87,9 @@ export default class MapContainer extends Component {
         title: location.title,
 		info: location.info,
 		icon: location.icon,
+		type: location.type,
 		animation: google.maps.Animation.DROP
       })
-	 
 	  
       marker.addListener('click', () => {
         this.populateInfoWindow(marker, infowindow)
@@ -100,42 +100,82 @@ export default class MapContainer extends Component {
 			setTimeout(function() {
 			marker.setAnimation(null);
 			}, 1500);
+			this.map.setZoom(12);
+			this.map.setCenter(marker.getPosition());
 		}	
-      })
+      })	  
       this.setState((state) => ({
         markers: [...state.markers, marker]
       }))
       bounds.extend(marker.position)
     })
     this.map.fitBounds(bounds)
+	
   }
+  
+ filterMarkers = () => {
+	 
+	 
+ }
 
    populateInfoWindow = (marker, infowindow) => {
-    //const defaultIcon = this.state.locations.icon;
+   const {google} = this.props
+   
     if (infowindow.marker !== marker) {
     infowindow.marker = marker;
 	infowindow.setContent('<h3>' + marker.title + '</h3>' + '<h4>' + marker.info + '</h4>')
-      infowindow.open(this.map, marker);
-	  
-      // Make sure the marker property is cleared if the infowindow is closed.
+    infowindow.open(this.map, marker);
+	this.map.setCenter(marker.getPosition());
+	this.map.setZoom(19);
+	marker.setAnimation(google.maps.Animation.BOUNCE); 
+	    setTimeout(function() {
+			marker.setAnimation(null);
+			}, 1500);
+     
+	 // Make sure the marker property is cleared if the infowindow is closed.
       infowindow.addListener('closeclick', function () {
       infowindow.marker = null;
       });
     }
   }
   
+ clickOnSearchBarFunction = () => {
+	  
+  document.querySelector('.all').addEventListener('click', function () {
+	document.querySelector('.location-list').setAttribute("style", "display: block;");
+  });
+  
+  document.querySelector('.Family').addEventListener('click', function () {
+  document.querySelector('.location-list').setAttribute("style", "display: block; color: green;");	  
+  });
+  
+  document.querySelector('.Us').addEventListener('click', function () {
+	document.querySelector('.location-list').setAttribute("style", "display: block; color: red;");	  
+  });
+  
+  document.querySelector('.Me').addEventListener('click', function () {
+	document.querySelector('.location-list').setAttribute("style", "display: block; color: purple;");	  
+  });
+ 
+   
+  }
+  
+ 
   render() {
-    const {markers} = this.state
-	
+   const {markers} = this.state
+   
+   
     return (
+	 
         <div className="container">	  
           <div className="search-bar">
-		    <li className="all"><img src={allLocations} title="all places"/></li>
-			<li className="Family"><img src={Family} title="Places for Family"/></li>
-			<li className="Us"><img src={Us} title="Places for Dates"/></li>
-			<li className="Me"><img src={Me} title="Places for Me"/></li>
-		  </div>            
-          <div className="list-bar">
+		    <li className="all"><img src={allLocations} title="all places" alt="show all locations on the map"/></li>
+			<li className="Family"><img src={Family} title="Places for Family" alt="show places for family"/></li>
+			<li className="Us"><img src={Us} title="Places for Dates" alt="Show places for date"/></li>
+			<li className="Me"><img src={Me} title="Places for Me" alt="show places for woman"/></li>
+		  </div> 
+       			   
+          <div className="list-bar">	
 		   <ul className="location-list">{
 			  markers.map( (marker, index) =>
 		     (<li key={index}>{marker.title}</li>))

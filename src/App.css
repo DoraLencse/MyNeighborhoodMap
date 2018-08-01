@@ -80,6 +80,10 @@ hr {
   cursor: pointer;
 }
 
+.location-list {	
+  display: none;
+}
+
 .show {
   display: block;
 }
