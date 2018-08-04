@@ -22,6 +22,8 @@ export default class MapContainer extends Component {
         ],
 		
 		markers: [],
+		query: '',
+		filteredLocations: null,
 		filteredMarker: [],
 		infowindow: new this.props.google.maps.InfoWindow()		
 
@@ -30,10 +32,8 @@ export default class MapContainer extends Component {
   componentDidMount() {
     this.loadMap()
 	this.onClickLocation()
-	this.clickOnSearchBarFunction()
 	this.filterMarkers()
   }
-  
 
   loadMap() {
     if (this.props && this.props.google) {
@@ -61,7 +61,7 @@ export default class MapContainer extends Component {
 	 const that = this
 	 const {infowindow} = this.state
 	 	 
-	 const displayInfowindow = (e) => {
+	 const showInfowindow = (e) => {
 		 const {markers} = this.state
 		 const markerInd = markers.findIndex(m => m.title.toLowerCase() === e.target.innerText.toLowerCase())
 		 that.populateInfoWindow(markers[markerInd], infowindow)
@@ -69,9 +69,9 @@ export default class MapContainer extends Component {
 	 }
 	 document.querySelector('.location-list').addEventListener('click', function (e) {
 		 if(e.target && e.target.nodeName === "LI") {
-			 displayInfowindow(e);
+			 showInfowindow(e);
 		 }	   
-	 })   
+	 })  
   }
    
   addMarkers = () => {
@@ -89,7 +89,7 @@ export default class MapContainer extends Component {
 		icon: location.icon,
 		type: location.type,
 		animation: google.maps.Animation.DROP
-      })
+	  })	 
 	  
       marker.addListener('click', () => {
         this.populateInfoWindow(marker, infowindow)
@@ -112,12 +112,39 @@ export default class MapContainer extends Component {
     this.map.fitBounds(bounds)
 	
   }
-  
- filterMarkers = () => {
+ 
+//Handle value change on searh field
+  handleValueChange = (e) => {
+    this.setState({query: e.target.value})
+  }
+ 
+ filterMarkers = (type) => {
 	 
+	  const {locations, query, markers, infowindow} = this.state
 	 
- }
+	 if (type) {
+      locations.forEach((l, i) => {
+        if (l.type.toLowerCase().includes(type.toLowerCase())) {
+          markers[i].setVisible(true)
+        } else {
+          if (infowindow.marker === markers[i]) {
+            // close the info window if marker removed
+            infowindow.close()
+          }
+          markers[i].setVisible(false)
+        }
+      })
+    } else {
+      locations.forEach((l, i) => {
+        if (markers.length && markers[i]) {
+          markers[i].setVisible(true)
+        }
+      })
+    }
 
+	
+}	
+   //Set up infowindow
    populateInfoWindow = (marker, infowindow) => {
    const {google} = this.props
    
@@ -138,51 +165,89 @@ export default class MapContainer extends Component {
       });
     }
   }
-  
- clickOnSearchBarFunction = () => {
-	  
-  document.querySelector('.all').addEventListener('click', function () {
-	document.querySelector('.location-list').setAttribute("style", "display: block;");
-  });
-  
-  document.querySelector('.Family').addEventListener('click', function () {
-  document.querySelector('.location-list').setAttribute("style", "display: block; color: green;");	  
-  });
-  
-  document.querySelector('.Us').addEventListener('click', function () {
-	document.querySelector('.location-list').setAttribute("style", "display: block; color: red;");	  
-  });
-  
-  document.querySelector('.Me').addEventListener('click', function () {
-	document.querySelector('.location-list').setAttribute("style", "display: block; color: purple;");	  
-  });
+
  
+  render() {   
+   const {locations, query, markers, infowindow} = this.state
    
-  }
+ // filter markers with search field - inspired by P8 webinar:  https://www.youtube.com/watch?v=9t1xxypdkrE  
+	if (query) {
+      locations.forEach((l, i) => {
+        if (l.title.toLowerCase().includes(query.toLowerCase())) {
+          markers[i].setVisible(true)
+        } else {
+          if (infowindow.marker === markers[i]) {
+            // close the info window if marker removed
+            infowindow.close()
+          }
+          markers[i].setVisible(false)
+        }
+      })
+    } else {
+      locations.forEach((l, i) => {
+        if (markers.length && markers[i]) {
+          markers[i].setVisible(true)
+        }
+      })
+    }
   
- 
-  render() {
-   const {markers} = this.state
-   
-   
     return (
 	 
         <div className="container">	  
-          <div className="search-bar">
-		    <li className="all"><img src={allLocations} title="all places" alt="show all locations on the map"/></li>
-			<li className="Family"><img src={Family} title="Places for Family" alt="show places for family"/></li>
-			<li className="Us"><img src={Us} title="Places for Dates" alt="Show places for date"/></li>
-			<li className="Me"><img src={Me} title="Places for Me" alt="show places for woman"/></li>
+          <div className="search-bar">	
+            <input className="search-tab"
+		          role="search" 
+                  aria-label="Search places by name"
+                  tabIndex="0"
+		          placeholder="type for search" 
+		          type='text'
+                  value={this.state.value}
+                  onChange={this.handleValueChange}/>
+				 		  
+		    <li className="all"
+			  tabIndex="0"
+			  role="button" 
+			  aria-label="filter all locations" 
+			  title="all places" 
+			  onClick={() => this.filterMarkers('')}>
+			  <img src={allLocations} alt="show all locations on the map"/>
+		    </li>
+			  
+			<li className="Family"
+			  tabIndex="0"
+			  role="button" 
+			  aria-label="filter locations for Family" 
+			  title="Places for Family"  
+              onClick={() => this.filterMarkers('family')}>
+			  <img src={Family} alt="show places for family"/>
+		    </li>
+			 
+			<li className="Us"
+			  tabIndex="0"
+			  role="button" 
+			  aria-label="filter locations for Celebration / Dates" 
+			  title="Places for Dates" 
+			  onClick={() => this.filterMarkers('us')}>
+			  <img src={Us} alt="Show places for date"/>
+			</li>
+			
+			<li className="Me"
+			  tabIndex="0"
+			  role="button" 
+			  aria-label="filter locations for Woman / Me" 
+			  title="Places for Me"
+			  onClick={() => this.filterMarkers('me')}>
+			  <img src={Me} alt="show places for woman"/></li>
 		  </div> 
        			   
-          <div className="list-bar">	
-		   <ul className="location-list">{
-			  markers.map( (marker, index) =>
-		     (<li key={index}>{marker.title}</li>))
-		   }</ul>
+          <div className="list-bar">			
+            <ul className="location-list">{
+              markers.filter(marker => marker.getVisible()).map((marker, index) =>
+                (<li key={index}>{marker.title}</li>))
+            }</ul>
           </div>			  
           <div role="application" className="map" ref="map">
-            loading map...
+            Your map is loading ...
           </div>		
       </div>
     )

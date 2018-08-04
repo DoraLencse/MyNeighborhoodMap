@@ -12,10 +12,16 @@
   background-color: #fdefe1;
   height: 130px;
   color: #334d5c;
+  width: 100%;
+  display: block;
+  flex-wrap: wrap;
+  text-align: center;
+  margin: 0;
 }
 
 .App-title {
   font-size: 1.5em;
+  text-align: center;
 }
 
 .App-intro {
@@ -34,7 +40,6 @@ hr {
 .map {
   margin: 0;
   width: 80%;
-  height: 80vh;
 }
 
 .container {
@@ -59,6 +64,15 @@ hr {
 	cursor: pointer;
 }
 
+.search-tab {
+	display: flex;
+	flex-wrap: wrap;
+	float: left;
+	width: 20%;
+	border-radius: 10px;
+	line-height: 1.5rem;
+}
+
 .list-bar {
   display: flex;
   width: 20%;
@@ -81,7 +95,8 @@ hr {
 }
 
 .location-list {	
-  display: none;
+  display: block;
+  height: 100vh;
 }
 
 .show {
@@ -95,10 +110,67 @@ hr {
 @media screen and (max-width: 800px) {
 
   .map {
-    width: 100%;
+    width: 80%;
+	display: flex;
   }
+  
+  .list-bar {
+  display: flex;
+  width: 20%;
+  float: left;
+  color: #334d5c;
+  line-height: 3rem;
+  background-color: #fdefe1;
+  font-size: 0.8rem;
+  margin: 0;
+  padding: 0;
+}
+
+ .search-tab {
+	display: flex;
+	width: 20%; 
+	line-height: 0;
+	height: 20px;
+ }
+
+.location-list {
+  line-height: 3rem;
+   margin: 0;
+   padding: 0;
+}
+
+.location-list li {
+   margin-left: 5px;
+}
+
 }
 
 @media screen and (max-width: 500px) {
+ .map {
+	display: flex;
+    width: 70%;
+	float: left;
+  
+ }
  
+ .search-tab {
+	display: flex;
+	width: 25%; 
+	line-height: 0;
+	height: 20px;
+ }
+  
+  .list-bar {
+  display: flex;
+  width: 30%;
+  float: left;
+  color: #334d5c;
+  line-height: 3rem;
+  background-color: #fdefe1;
+  font-size: 0.8rem;
+}
+
+.location-list ul {
+  line-height: 3rem;
+}
 }
