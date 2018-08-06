@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
+
 import allLocations from './Icons/icons8-paste-special-40.png';
 import Family from './Icons/icons8-family-40.png';
 import Us from './Icons/icons8-romance-40.png';
@@ -9,6 +10,10 @@ import Zoo from './Icons/icons8-elephant-40.png';
 import Woman from './Icons/icons8-hair-dryer-40.png';
 import Train from './Icons/icons8-steam-engine-40.png';
 import PlayingGround from './Icons/icons8-playground-40.png';
+
+//import { CLIENT_ID, CLIENT_SECRET, VERSION } from './Data/authentication';
+//import {request} from '../Data/foursqure';
+
 
 export default class MapContainer extends Component {
 	
@@ -23,10 +28,7 @@ export default class MapContainer extends Component {
 		
 		markers: [],
 		query: '',
-		filteredLocations: null,
-		filteredMarker: [],
-		infowindow: new this.props.google.maps.InfoWindow()		
-
+		infowindow: new this.props.google.maps.InfoWindow()
 	}
 
   componentDidMount() {
@@ -78,7 +80,6 @@ export default class MapContainer extends Component {
 	const {google} = this.props
     let {infowindow} = this.state
     const bounds = new google.maps.LatLngBounds()
-	const {locations} = this.state
 	
     this.state.locations.forEach((location, ind) => {	  
       const marker = new google.maps.Marker({
@@ -118,14 +119,16 @@ export default class MapContainer extends Component {
     this.setState({query: e.target.value})
   }
  
+ //filter Markers by topic
  filterMarkers = (type) => {
-	 
-	  const {locations, query, markers, infowindow} = this.state
+	 const {locations, markers, infowindow} = this.state
 	 
 	 if (type) {
       locations.forEach((l, i) => {
         if (l.type.toLowerCase().includes(type.toLowerCase())) {
-          markers[i].setVisible(true)
+          markers[i].setVisible(true);
+		  this.map.setZoom(11);
+		  this.map.setCenter({lat: 47.4953404, lng: 19.0727711});
         } else {
           if (infowindow.marker === markers[i]) {
             // close the info window if marker removed
@@ -137,20 +140,24 @@ export default class MapContainer extends Component {
     } else {
       locations.forEach((l, i) => {
         if (markers.length && markers[i]) {
-          markers[i].setVisible(true)
+          markers[i].setVisible(true);
+		  this.map.setZoom(12);
+		  this.map.setCenter({lat: 47.4953404, lng: 19.0727711});
         }
       })
-    }
+    }	
+}
 
 	
-}	
    //Set up infowindow
    populateInfoWindow = (marker, infowindow) => {
    const {google} = this.props
    
     if (infowindow.marker !== marker) {
     infowindow.marker = marker;
-	infowindow.setContent('<h3>' + marker.title + '</h3>' + '<h4>' + marker.info + '</h4>')
+	infowindow.setContent('<h3>' + marker.title + '</h3>' +
+                       	  '<h4>' + marker.info + '</h4>' + 
+						  '<p>' + 'Photo from Foursquare' + '</p>');
     infowindow.open(this.map, marker);
 	this.map.setCenter(marker.getPosition());
 	this.map.setZoom(19);
@@ -164,17 +171,20 @@ export default class MapContainer extends Component {
       infowindow.marker = null;
       });
     }
-  }
 
+  }
  
+
   render() {   
    const {locations, query, markers, infowindow} = this.state
+   
    
  // filter markers with search field - inspired by P8 webinar:  https://www.youtube.com/watch?v=9t1xxypdkrE  
 	if (query) {
       locations.forEach((l, i) => {
         if (l.title.toLowerCase().includes(query.toLowerCase())) {
           markers[i].setVisible(true)
+		  this.map.setZoom(12);
         } else {
           if (infowindow.marker === markers[i]) {
             // close the info window if marker removed
@@ -253,3 +263,4 @@ export default class MapContainer extends Component {
     )
   }
 }
+

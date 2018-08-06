@@ -3,9 +3,12 @@ import { GoogleApiWrapper } from 'google-maps-react';
 import logo from './Icons/globe-map-icon.png';
 import './App.css';
 import Map from './Map';
+import { MAP_KEY } from './Data/authentication';
 
 class App extends Component {
+   
   render() {
+	const Key = MAP_KEY;
     return (
       <div className="App">
         <header className="App-header">
@@ -20,5 +23,5 @@ class App extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: 'AIzaSyBHNjDQ5OJgAi0KWRZJTnsME2gmHxzeLS8'
+apiKey: this.Key
 })(App)
