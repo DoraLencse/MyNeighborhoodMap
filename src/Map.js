@@ -91,8 +91,7 @@ export default class MapContainer extends Component {
 		info: location.info,
 		icon: location.icon,
 		type: location.type,
-		name: location.name,
-		
+		name: location.name,	
 		animation: google.maps.Animation.DROP
 	  })  
 	  
@@ -111,7 +110,7 @@ export default class MapContainer extends Component {
       })
       
  // get request of foursquare data
-   var reqURL = 'https://api.foursquare.com/v2/venues/search?ll=47.4953404,19.0727711' + '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=' + VERSION + '&query=' + marker.name + '&limit=1';
+ var reqURL = 'https://api.foursquare.com/v2/venues/search?ll=47.4953404,19.0727711' + '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=' + VERSION + '&query=' + marker.name + '&limit=1';
 
     fetch(reqURL)
 	.then(response => response.json()) 
@@ -119,8 +118,7 @@ export default class MapContainer extends Component {
 		console.log(data);
 		data.response.venues.forEach((venue, i) => {
 			if(venue.name === marker.name) {
-			  marker.address = venue.location.address;
-			  
+			  marker.address = venue.location.address;		  
             } else {
 			  marker.address = "no data from Foursquare";
 			  }			 
@@ -184,7 +182,8 @@ export default class MapContainer extends Component {
    
    let content = ('<h3>' + marker.title + '</h3>' +
                   '<h4>' + marker.info + '</h4>' + 
-			      '<p>' + marker.address + '</p>');
+			      '<p>' + marker.address + '</p>' +
+				  '<p><a href="https://www.google.hu/maps/place/'+ marker.name +'"target="_blank">' + "let`s go" + '</a></p>' );
    
     if (infowindow.marker !== marker) {
     infowindow.marker = marker;
