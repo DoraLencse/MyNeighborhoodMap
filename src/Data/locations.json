@@ -1,5 +1,6 @@
 [{
 "title": "Riso Restaurant",
+"name" : "Riso Ristorante & Terrace",
 "icon": "Pizza", 
 "info": "My favourite italian restaurant in Budapest", 
 "type": "us", 
@@ -9,7 +10,8 @@
    }
 },
 {
-"title": "Budapest Zoo", 
+"title": "Budapest Zoo",
+"name" : "Fővárosi Állat- és Növénykert", 
 "icon": "Zoo", 
 "info": "Great Place for the whole Family", 
 "type": "Family", 
@@ -20,6 +22,7 @@
 },
 {
 "title": "Podoben Hair Salon", 
+"name" : "Podoben Hair Salon",
 "icon": "Woman", 
 "info": "Kriszta is a great Hairdresser", 
 "type": "Me", 
@@ -29,7 +32,8 @@
   }
 },
 {
-"title": "Vuk Playground", 
+"title": "Vuk Playground",
+"name" : "Vuk játszótér", 
 "icon": "PlayingGround", 
 "info": "Great Place for Kids", 
 "type": "Family", 
@@ -40,6 +44,7 @@
 },
 {
 "title": "Children Railway",
+"name" : "Gyermekvasút - Csillebérc",
 "icon": "Train",
 "info": "Great place for the whole Family", 
 "type": "Family", 

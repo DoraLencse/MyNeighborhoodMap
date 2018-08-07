@@ -11,33 +11,35 @@ import Woman from './Icons/icons8-hair-dryer-40.png';
 import Train from './Icons/icons8-steam-engine-40.png';
 import PlayingGround from './Icons/icons8-playground-40.png';
 
-//import { CLIENT_ID, CLIENT_SECRET, VERSION } from './Data/authentication';
-//import {request} from '../Data/foursqure';
-
+import { CLIENT_ID, CLIENT_SECRET, VERSION } from './Data/authentication';
 
 export default class MapContainer extends Component {
 	
+	
 	state={
 		locations: [
-          {title: 'Riso Restaurant', icon: Pizza, info: 'My favourite italian restaurant in Budapest', type: 'us', location: {lat: 47.5059025, lng: 19.0290468}},
-          {title: 'Budapest Zoo', icon: Zoo, info: 'Great Place for the whole Family', type: 'Family', location: {lat: 47.5189977, lng: 19.0754546}},
-          {title: 'Podoben Hair Salon', icon: Woman, info: 'Kriszta is a great Hairdresser', type: 'Me', location: {lat: 47.4756723, lng: 19.0459695}},
-          {title: 'Vuk Playground', icon: PlayingGround, info: 'Great Place for Kids', type: 'Family', location: {lat: 47.4864953, lng: 19.0401898}},
-	      {title: 'Children Railway', icon: Train, info: 'Great place for the whole Family', type: 'Family', location: {lat: 47.4978666, lng: 18.964126}}
+        {name: 'Riso Ristorante & Terrace', title: 'Riso Restaurant', icon: Pizza, info: 'My favourite italian restaurant in Budapest', type: 'us', location: {lat: 47.5059025, lng: 19.0290468}},
+          {name: 'Fővárosi Állat- és Növénykert', title: 'Budapest Zoo', icon: Zoo, info: 'Great Place for the whole Family', type: 'Family', location: {lat: 47.5189977, lng: 19.0754546}},
+          {name: 'Podoben Hair Salon', title: 'Podoben Hair Salon', icon: Woman, info: 'Kriszta is a great Hairdresser', type: 'Me', location: {lat: 47.4756723, lng: 19.0459695}},
+          {name: 'Vuk játszótér', title: 'Vuk Playground', icon: PlayingGround, info: 'Great Place for Kids', type: 'Family', location: {lat: 47.4864953, lng: 19.0401898}},
+	      {name: 'Gyermekvasút - Csillebérc', title: 'Children Railway', icon: Train, info: 'Great place for the whole Family', type: 'Family', location: {lat: 47.4978666, lng: 18.964126}}
+		 
         ],
 		
 		markers: [],
 		query: '',
-		infowindow: new this.props.google.maps.InfoWindow()
+		infowindow: new this.props.google.maps.InfoWindow()	
 	}
 
   componentDidMount() {
     this.loadMap()
 	this.onClickLocation()
 	this.filterMarkers()
+//	this.loadLocations()
   }
 
   loadMap() {
+	  
     if (this.props && this.props.google) {
       const {google} = this.props
       const maps = google.maps
@@ -54,7 +56,6 @@ export default class MapContainer extends Component {
       this.map = new maps.Map(node, mapConfig)
 	  this.addMarkers()
     }
-	
   } 
   
   //function for clicking on the sidebar in order to show the selected location on the map
@@ -81,6 +82,7 @@ export default class MapContainer extends Component {
     let {infowindow} = this.state
     const bounds = new google.maps.LatLngBounds()
 	
+	
     this.state.locations.forEach((location, ind) => {	  
       const marker = new google.maps.Marker({
         position: {lat: location.location.lat, lng: location.location.lng},
@@ -89,8 +91,10 @@ export default class MapContainer extends Component {
 		info: location.info,
 		icon: location.icon,
 		type: location.type,
+		name: location.name,
+		
 		animation: google.maps.Animation.DROP
-	  })	 
+	  })  
 	  
       marker.addListener('click', () => {
         this.populateInfoWindow(marker, infowindow)
@@ -104,7 +108,30 @@ export default class MapContainer extends Component {
 			this.map.setZoom(12);
 			this.map.setCenter(marker.getPosition());
 		}	
-      })	  
+      })
+      
+ // get request of foursquare data
+   var reqURL = 'https://api.foursquare.com/v2/venues/search?ll=47.4953404,19.0727711' + '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=' + VERSION + '&query=' + marker.name + '&limit=1';
+
+    fetch(reqURL)
+	.then(response => response.json()) 
+	.then(data => {
+		console.log(data);
+		data.response.venues.forEach((venue, i) => {
+			if(venue.name === marker.name) {
+			  marker.address = venue.location.address;
+			  
+            } else {
+			  marker.address = "no data from Foursquare";
+			  }			 
+		  }) 
+		})
+		.catch(err => {
+      console.log('Failed to fetch foursquare data', err)
+    })
+
+//foursquare part _ end
+	
       this.setState((state) => ({
         markers: [...state.markers, marker]
       }))
@@ -113,6 +140,7 @@ export default class MapContainer extends Component {
     this.map.fitBounds(bounds)
 	
   }
+  
  
 //Handle value change on searh field
   handleValueChange = (e) => {
@@ -121,6 +149,7 @@ export default class MapContainer extends Component {
  
  //filter Markers by topic
  filterMarkers = (type) => {
+	 
 	 const {locations, markers, infowindow} = this.state
 	 
 	 if (type) {
@@ -153,11 +182,13 @@ export default class MapContainer extends Component {
    populateInfoWindow = (marker, infowindow) => {
    const {google} = this.props
    
+   let content = ('<h3>' + marker.title + '</h3>' +
+                  '<h4>' + marker.info + '</h4>' + 
+			      '<p>' + marker.address + '</p>');
+   
     if (infowindow.marker !== marker) {
     infowindow.marker = marker;
-	infowindow.setContent('<h3>' + marker.title + '</h3>' +
-                       	  '<h4>' + marker.info + '</h4>' + 
-						  '<p>' + 'Photo from Foursquare' + '</p>');
+	infowindow.setContent(content);
     infowindow.open(this.map, marker);
 	this.map.setCenter(marker.getPosition());
 	this.map.setZoom(19);

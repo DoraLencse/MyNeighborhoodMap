@@ -8,7 +8,7 @@ import { MAP_KEY } from './Data/authentication';
 class App extends Component {
    
   render() {
-	const Key = MAP_KEY;
+	//const Key = MAP_KEY;
     return (
       <div className="App">
         <header className="App-header">
@@ -23,5 +23,5 @@ class App extends Component {
 }
 
 export default GoogleApiWrapper({
-apiKey: this.Key
+apiKey: MAP_KEY
 })(App)
