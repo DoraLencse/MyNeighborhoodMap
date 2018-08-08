@@ -9,7 +9,7 @@ Contents:
 - [Run in Production Mode](#run-in-production-mode)
 - [Using the App](#using-the-app)
 - [Inspirations, sources](#inspirations-sources)
-
+- [TO DO - further developement](#further-developement)
 ## Project Description
 
 This is my final project in the Udacity Front-End Web Developer Nanodegree Program.
@@ -86,4 +86,6 @@ To get more details about the locations you are interested in, click on:
 - [JS fetch API tutorial](https://scotch.io/tutorials/how-to-use-the-javascript-fetch-api-to-get-data)
 - [CSS Tricks - using fetch](https://css-tricks.com/using-fetch/)
 
+## Further developement
 
+- Now my thematic filter just show the icons on the maps, but it isn't connected yet with the sidebar.
