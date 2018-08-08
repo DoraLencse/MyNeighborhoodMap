@@ -8,7 +8,7 @@ Contents:
 - [Run in Development Mode](#run-in-development-mode)
 - [Run in Production Mode](#run-in-production-mode)
 - [Using the App](#using-the-app)
-- [Inspirations, sources](#inspirations, sources)
+- [Inspirations, sources](#inspirations-sources)
 
 ## Project Description
 
