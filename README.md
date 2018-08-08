@@ -8,6 +8,7 @@ Contents:
 - [Run in Development Mode](#run-in-development-mode)
 - [Run in Production Mode](#run-in-production-mode)
 - [Using the App](#using-the-app)
+- [Inspirations, sources](#inspirations, sources)
 
 ## Project Description
 
@@ -77,3 +78,12 @@ To get more details about the locations you are interested in, click on:
 - a marker on the map or
 - a loation name on the sidebar
 - or you could filter the markers by topic as well on the map if you select an icon on the header:
+
+## Inspirations, sources
+
+- Udacity course materials
+- Udacity [P8 webinar](https://www.youtube.com/watch?v=9t1xxypdkrE)
+- [JS fetch API tutorial](https://scotch.io/tutorials/how-to-use-the-javascript-fetch-api-to-get-data)
+- [CSS Tricks - using fetch](https://css-tricks.com/using-fetch/)
+
+
