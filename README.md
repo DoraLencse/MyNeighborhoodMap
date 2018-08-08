@@ -1,6 +1,6 @@
 #My Neighbourhood Map - React
 
-[Live version](https://)
+[My Git repo](https://https://github.com/DoraLencse/MyNeighborhoodMap)
 
 Contents:
 - [Project Description](#project-description)
