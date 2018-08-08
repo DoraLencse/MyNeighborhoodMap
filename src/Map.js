@@ -15,10 +15,9 @@ import { CLIENT_ID, CLIENT_SECRET, VERSION } from './Data/authentication';
 
 export default class MapContainer extends Component {
 	
-	
-	state={
+  state={
 		locations: [
-        {name: 'Riso Ristorante & Terrace', title: 'Riso Restaurant', icon: Pizza, info: 'My favourite italian restaurant in Budapest', type: 'us', location: {lat: 47.5059025, lng: 19.0290468}},
+          {name: 'Riso Ristorante & Terrace', title: 'Riso Restaurant', icon: Pizza, info: 'My favourite italian restaurant in Budapest', type: 'us', location: {lat: 47.5059025, lng: 19.0290468}},
           {name: 'Fővárosi Állat- és Növénykert', title: 'Budapest Zoo', icon: Zoo, info: 'Great Place for the whole Family', type: 'Family', location: {lat: 47.5189977, lng: 19.0754546}},
           {name: 'Podoben Hair Salon', title: 'Podoben Hair Salon', icon: Woman, info: 'Kriszta is a great Hairdresser', type: 'Me', location: {lat: 47.4756723, lng: 19.0459695}},
           {name: 'Vuk játszótér', title: 'Vuk Playground', icon: PlayingGround, info: 'Great Place for Kids', type: 'Family', location: {lat: 47.4864953, lng: 19.0401898}},
@@ -35,11 +34,9 @@ export default class MapContainer extends Component {
     this.loadMap()
 	this.onClickLocation()
 	this.filterMarkers()
-//	this.loadLocations()
   }
 
-  loadMap() {
-	  
+  loadMap() {	 
     if (this.props && this.props.google) {
       const {google} = this.props
       const maps = google.maps
@@ -81,8 +78,7 @@ export default class MapContainer extends Component {
 	const {google} = this.props
     let {infowindow} = this.state
     const bounds = new google.maps.LatLngBounds()
-	
-	
+		
     this.state.locations.forEach((location, ind) => {	  
       const marker = new google.maps.Marker({
         position: {lat: location.location.lat, lng: location.location.lng},
@@ -109,13 +105,13 @@ export default class MapContainer extends Component {
 		}	
       })
       
- // get request of foursquare data
- var reqURL = 'https://api.foursquare.com/v2/venues/search?ll=47.4953404,19.0727711' + '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=' + VERSION + '&query=' + marker.name + '&limit=1';
+ // get request in order to get data from foursquare
+ var reqURL = 'https://api.foursquare.com/v2/venues/search?ll=47.4953404,19.0727711&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=' + VERSION + '&query=' + marker.name + '&limit=5';
 
     fetch(reqURL)
 	.then(response => response.json()) 
 	.then(data => {
-		console.log(data);
+		//console.log(data); // for testing if there is a data
 		data.response.venues.forEach((venue, i) => {
 			if(venue.name === marker.name) {
 			  marker.address = venue.location.address;		  
@@ -128,8 +124,8 @@ export default class MapContainer extends Component {
       console.log('Failed to fetch foursquare data', err)
     })
 
-//foursquare part _ end
-	
+//foursquare requestion part _ end
+//refreshing the datas	
       this.setState((state) => ({
         markers: [...state.markers, marker]
       }))
@@ -139,13 +135,12 @@ export default class MapContainer extends Component {
 	
   }
   
- 
 //Handle value change on searh field
   handleValueChange = (e) => {
     this.setState({query: e.target.value})
   }
  
- //filter Markers by topic
+//filter Markers by topic
  filterMarkers = (type) => {
 	 
 	 const {locations, markers, infowindow} = this.state
@@ -175,15 +170,14 @@ export default class MapContainer extends Component {
     }	
 }
 
-	
-   //Set up infowindow
+//Set up infowindow
    populateInfoWindow = (marker, infowindow) => {
    const {google} = this.props
    
-   let content = ('<h3>' + marker.title + '</h3>' +
+   let content = ('<h3>' + marker.title + '</h3>'+
                   '<h4>' + marker.info + '</h4>' + 
 			      '<p>' + marker.address + '</p>' +
-				  '<p><a href="https://www.google.hu/maps/place/'+ marker.name +'"target="_blank">' + "let`s go" + '</a></p>' );
+				  '<p><a href="https://www.google.hu/maps/place/'+ marker.name +'"target="_blank">"let`s go"</a></p>');
    
     if (infowindow.marker !== marker) {
     infowindow.marker = marker;
@@ -206,10 +200,9 @@ export default class MapContainer extends Component {
  
 
   render() {   
-   const {locations, query, markers, infowindow} = this.state
-   
-   
- // filter markers with search field - inspired by P8 webinar:  https://www.youtube.com/watch?v=9t1xxypdkrE  
+  const {locations, query, markers, infowindow} = this.state
+     
+// filter markers with search field - inspired by P8 webinar:  https://www.youtube.com/watch?v=9t1xxypdkrE  
 	if (query) {
       locations.forEach((l, i) => {
         if (l.title.toLowerCase().includes(query.toLowerCase())) {

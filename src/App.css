@@ -98,14 +98,11 @@ hr {
   display: block;
   height: 100vh;
 }
-
+/* finally I didn't use this class
 .show {
   display: block;
 }
-
-.error {
-  color: red;
-}
+*/
 
 @media screen and (max-width: 800px) {
 
