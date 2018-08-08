@@ -106,12 +106,12 @@ export default class MapContainer extends Component {
       })
       
  // get request in order to get data from foursquare
- var reqURL = 'https://api.foursquare.com/v2/venues/search?ll=47.4953404,19.0727711&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=' + VERSION + '&query=' + marker.name + '&limit=5';
+ var reqURL = 'https://api.foursquare.com/v2/venues/search?ll=47.4953404,19.0727711&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=' + VERSION + '&query=' + marker.name + '&limit=1';
 
     fetch(reqURL)
 	.then(response => response.json()) 
 	.then(data => {
-		//console.log(data); // for testing if there is a data
+		console.log(data); // for testing if there is a data
 		data.response.venues.forEach((venue, i) => {
 			if(venue.name === marker.name) {
 			  marker.address = venue.location.address;		  
